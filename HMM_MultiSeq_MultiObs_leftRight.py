@@ -23,7 +23,6 @@ dataset = 'train_FD001.txt'
 df = pd.read_csv(dir_path + r'/CMAPSSData/' + dataset, sep=" ", header=None, skipinitialspace=True).dropna(axis=1)
 df = df.rename(columns={0: 'unit', 1: 'cycle', 2: 'W1', 3: 'W2', 4: 'W3'})
 df_A = df[df.columns[[0, 1]]]
-df_W = df[df.columns[[2, 3, 4]]]
 df_S = df[df.columns[list(range(5, 26))]]
 
 
@@ -67,30 +66,24 @@ remodel.startprob_ = startprob
 remodel.transmat_ = transmat
 remodel = remodel.fit(df_hmm, lengths)
 
-
 state_seq = remodel.predict(df_hmm)
 pred = [state_seq[df[df['unit'] == i].index[0]:df[df['unit'] == i].index[-1] + 1] for i in
         range(1, df_A['unit'].max() + 1)]
 
-prob = remodel.predict_proba(df_hmm, lengths)
-prob_next_step = remodel.transmat_[state_seq, :]
-
-HMM_out = [prob[df[df['unit'] == i].index[0]:df[df['unit'] == i].index[-1] + 1]
-           for i in range(1, df_A['unit'].max() + 1)]
-failure_states = [pred[i][-1] for i in range(df_A['unit'].max())]
-
 
 plt.figure(0)
-plt.plot(pred[0:lengths[0]-1])
+plt.plot(pred[0])
 plt.xlabel('# Flights')
 plt.ylabel('HMM states')
 
 plt.figure(1)
-plt.plot(pred[lengths[0]:lengths[0]+lengths[1]-1])
+plt.plot(pred[1])
 plt.xlabel('# Flights')
 plt.ylabel('HMM states')
 
-plt.figure(1)
-plt.plot(pred[lengths[1]:lengths[0]+lengths[1]+lengths[2]-1])
+plt.figure(2)
+plt.plot(pred[2])
 plt.xlabel('# Flights')
 plt.ylabel('HMM states')
+
+plt.show()
